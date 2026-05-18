@@ -1,0 +1,6 @@
+{
+  "author": "Malishade",
+  "description": "Local HTTP API for browsing and filtering item data.",
+  "library":  true,
+  "dependencies": []
+}
