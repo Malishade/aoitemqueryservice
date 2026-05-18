@@ -592,6 +592,8 @@ public class AOItemQueryService
     {
         var rows = new List<Dictionary<string, object?>>();
         using var con = new SqliteConnection($"Data Source={_dbPath};Mode=ReadOnly;");
+
+        Chat.WriteLine(_dbPath);
         try
         {
             con.Open();
