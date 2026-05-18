@@ -592,7 +592,16 @@ public class AOItemQueryService
     {
         var rows = new List<Dictionary<string, object?>>();
         using var con = new SqliteConnection($"Data Source={_dbPath};Mode=ReadOnly;");
-        con.Open();
+        try
+        {
+            con.Open();
+        }
+        catch (Exception ex)
+        {
+            Chat.WriteLine($"[DB] {ex}");
+            Chat.WriteLine($"[DB] Inner: {ex.InnerException}");
+            throw;
+        }
 
         con.CreateFunction("name_matches", (string? query, string? name) =>
             query != null && name != null && FuzzyMatcher.Match(query, name) ? 1 : 0);
