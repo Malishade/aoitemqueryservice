@@ -12,6 +12,7 @@ public class AOItemQueryService
     private Server _server;
     public AOItemQueryService(Server server)
     {
+        SQLitePCL.Batteries_V2.Init();
         _server = server;
         _dbPath = Path.Combine(AppContext.BaseDirectory, server == Server.PRK ? "items_prk.db" : "items_retail.db");
     }
