@@ -18,7 +18,7 @@ public class AOItemQueryService
 
     public void Start()
     {
-        int port = _server == Server.PRK ? 7070 : 7071;
+        int port = _server == Server.Retail ? 7070 : 7071;
         string url = $"http://localhost:{port}/";
 
         _serverThread = new Thread(() =>
