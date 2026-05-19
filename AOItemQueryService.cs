@@ -14,7 +14,12 @@ public class AOItemQueryService
     {
         SQLitePCL.Batteries_V2.Init();
         _server = server;
-        _dbPath = Path.Combine(AppContext.BaseDirectory, server == Server.PRK ? "items_prk.db" : "items_retail.db");
+        _dbPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "AOSharp", "MalisMissionRoller", server == Server.PRK ? "items_prk.db" : "items_retail.db"
+        );
+        Directory.CreateDirectory(Path.GetDirectoryName(_dbPath)!);
+
     }
 
     public void Start()
@@ -183,7 +188,12 @@ public class AOItemQueryService
         }
         catch (Exception ex)
         {
-            Chat.WriteLine($"[AoDbServer] Handler error: {ex.Message}");
+            var inner = ex;
+            while (inner != null)
+            {
+                Chat.WriteLine($"[AoDbServer] {inner.GetType().Name}: {inner.Message}");
+                inner = inner.InnerException;
+            }
             try { res.StatusCode = 500; } catch { }
         }
         finally
@@ -350,8 +360,8 @@ public class AOItemQueryService
             if (string.IsNullOrWhiteSpace(query) || string.IsNullOrWhiteSpace(name))
                 return false;
 
-            var words = SplitWords(name);        // ["might","of","the","revenant"]
-            var normName = Normalize(name);          // "mightoftherevenant"
+            var words = SplitWords(name);       // ["might","of","the","revenant"]
+            var normName = Normalize(name);     // "mightoftherevenant"
             var queryParts = query.Trim()
                                   .ToLowerInvariant()
                                   .Split(' ', StringSplitOptions.RemoveEmptyEntries);
@@ -593,7 +603,6 @@ public class AOItemQueryService
         var rows = new List<Dictionary<string, object?>>();
         using var con = new SqliteConnection($"Data Source={_dbPath};Mode=ReadOnly;");
 
-        Chat.WriteLine(_dbPath);
         try
         {
             con.Open();
